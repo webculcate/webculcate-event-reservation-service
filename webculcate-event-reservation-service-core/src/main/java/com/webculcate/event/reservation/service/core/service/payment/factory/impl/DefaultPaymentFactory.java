@@ -18,6 +18,7 @@ public class DefaultPaymentFactory implements IPaymentFactory {
         return Payment.builder()
                 .purchasedBy(request.getPurchasedBy())
                 .amount(request.getAmount())
+                .paymentOperation(request.getPaymentOperation())
                 .timeLog(new TimeLog())
                 .build();
     }

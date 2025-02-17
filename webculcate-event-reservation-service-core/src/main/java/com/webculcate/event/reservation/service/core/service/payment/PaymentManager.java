@@ -1,5 +1,6 @@
 package com.webculcate.event.reservation.service.core.service.payment;
 
+import com.webculcate.event.reservation.service.core.constant.PaymentOperationType;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationCreationRequest;
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentRequest;
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentResponse;
@@ -33,12 +34,12 @@ public class PaymentManager {
             return serviceMap.get(DEFAULT_PAYMENT_SERVICE);
     }
 
-    public PaymentResponse adaptAndPay(PaymentRequest request) {
+    public PaymentResponse pay(PaymentRequest request) {
         return getPaymentService().pay(request);
     }
 
-    public PaymentResponse adaptAndPay(EventReservationCreationRequest request) {
+    public PaymentResponse adaptAndPay(EventReservationCreationRequest request, PaymentOperationType paymentOperation) {
         Double amount = amountGenerator.generateAmount(request.getScheduledEventId(), request.getCustomerIds());
-        return getPaymentService().pay(new PaymentRequest(request.getPurchasedBy(), amount));
+        return getPaymentService().pay(new PaymentRequest(request.getPurchasedBy(), amount, paymentOperation));
     }
 }

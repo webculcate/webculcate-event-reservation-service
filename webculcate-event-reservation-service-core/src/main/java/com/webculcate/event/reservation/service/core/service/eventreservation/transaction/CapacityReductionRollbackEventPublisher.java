@@ -19,4 +19,11 @@ public class CapacityReductionRollbackEventPublisher {
         publisherService.send(WEBCULCATE_TOPIC_CAPACITY_REDUCTION_ROLLBACK, capacityReductionRollbackEvent);
     }
 
+    public void publishCapacityReductionRollbackEvent(Long scheduledEventId, Integer creditCapacity) {
+        publishCapacityReductionRollbackEvent(new CapacityReductionRollbackEvent(
+                scheduledEventId,
+                creditCapacity
+        ));
+    }
+
 }

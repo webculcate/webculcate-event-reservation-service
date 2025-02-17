@@ -1,5 +1,6 @@
 package com.webculcate.event.reservation.service.core.service.eventreservation.transaction;
 
+import com.webculcate.event.reservation.service.core.constant.PaymentOperationType;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidCapacityException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.PaymentFailedException;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationCreationRequest;
@@ -51,7 +52,7 @@ public class EventReservationTransactionService {
         else
             rollbackDto.setCapacityUpdateResponse(reductionResponse);
         List<ScheduledEventReservation> reservations = generateAndSaveEventReservations(request);
-        PaymentResponse paymentResponse = paymentManager.adaptAndPay(request);
+        PaymentResponse paymentResponse = paymentManager.adaptAndPay(request, PaymentOperationType.DEBIT);
         if (paymentResponse.isNotSuccessful())
             throw new PaymentFailedException();
         else

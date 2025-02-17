@@ -1,6 +1,7 @@
 package com.webculcate.event.reservation.service.core.model.dto.payment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.webculcate.event.reservation.service.core.constant.PaymentOperationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +17,7 @@ public class PaymentRequest {
     private Long purchasedBy;
 
     private Double amount;
+
+    private PaymentOperationType paymentOperation;
 
 }

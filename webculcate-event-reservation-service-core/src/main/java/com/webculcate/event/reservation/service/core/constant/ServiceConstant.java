@@ -24,6 +24,8 @@ public class ServiceConstant {
 
     public static final String STRING_SPACE = " ";
 
+    public static final String NOT_AVAILABLE = "NOT_AVAILABLE";
+
 
     // external
 

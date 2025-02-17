@@ -1,5 +1,6 @@
 package com.webculcate.event.reservation.service.core.model.entity.payment;
 
+import com.webculcate.event.reservation.service.core.constant.PaymentOperationType;
 import com.webculcate.event.reservation.service.core.model.entity.embedded.TimeLog;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,8 @@ public class Payment {
     private Long purchasedBy;
 
     private Double amount;
+
+    private PaymentOperationType paymentOperation;
 
     @Embedded
     private TimeLog timeLog;
