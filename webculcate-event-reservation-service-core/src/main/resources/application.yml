@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: WEBCULCATE-EVENT-RESERVATION-SERVICE-CORE
+  datasource:
+    url: ${DATA_SOURCE_URL}
+    username: ${DATA_SOURCE_USERNAME}
+    password: ${DATA_SOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    consumer:
+      bootstrap-servers: ${BOOTSTRAP_SERVER_HOST}
+      group-id: ${GROUP_ID}
+      auto-offset-reset: earliest
+      key-deserializer: ${KEY_DESERIALIZER}
+      value-deserializer: ${VALUE_DESERIALIZER}
+    producer:
+      bootstrap-servers: ${BOOTSTRAP_SERVER_HOST}
+      key-serializer: ${KEY_SERIALIZER}
+      value-serializer: ${VALUE_SERIALIZER}
+
+server:
+  port: ${SERVER_PORT}
+eureka:
+  instance:
+    prefer-ip-address: false
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${REGISTRY_PATH}
+
+application:
+  proxy:
+    enabled: true
+  bulk:
+    request:
+      user:
+        limit: 20
