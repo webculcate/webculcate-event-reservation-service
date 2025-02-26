@@ -1,1 +1,1 @@
-# webculcate-event-reservation-service
+# webculcate event reservation service
