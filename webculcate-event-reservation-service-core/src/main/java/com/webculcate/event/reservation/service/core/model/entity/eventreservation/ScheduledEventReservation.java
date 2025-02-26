@@ -1,8 +1,8 @@
 package com.webculcate.event.reservation.service.core.model.entity.eventreservation;
 
 import com.webculcate.event.reservation.service.core.constant.ScheduledEventReservationStatus;
-import com.webculcate.event.reservation.service.core.model.entity.payment.Payment;
 import com.webculcate.event.reservation.service.core.model.entity.embedded.TimeLog;
+import com.webculcate.event.reservation.service.core.model.entity.payment.Payment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,13 @@ import static com.webculcate.event.reservation.service.core.constant.ServiceCons
 @Data
 @Builder
 @Entity
-@Table(name = SCHEDULED_EVENT_RESERVATION_TABLE_NAME)
+@Table(
+        name = SCHEDULED_EVENT_RESERVATION_TABLE_NAME,
+        indexes = @Index(
+                columnList = SCHEDULED_EVENT_ID_COLUMN_NAME,
+                name = SCHEDULED_EVENT_ID_INDEX_NAME
+        )
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -33,22 +39,25 @@ public class ScheduledEventReservation {
     )
     private Long scheduledEventReservationId;
 
+    @Column(nullable = false)
     private Long scheduledEventId;
 
+    @Column(nullable = false)
     private ScheduledEventReservationStatus status;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(
             name = PAYMENT_FOREIGN_KEY,
             referencedColumnName = "paymentId"
     )
     private Payment payment;
 
+    @Column(nullable = false)
     private Long customerId;
 
     /*
-    * to avoid duplicate confirmed entries for a customer
-    */
+     * to avoid duplicate confirmed entries for a customer
+     */
     @Column(unique = true)
     private String confirmationKey;
 

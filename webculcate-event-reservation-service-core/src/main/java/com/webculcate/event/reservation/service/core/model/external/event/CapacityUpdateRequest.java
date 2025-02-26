@@ -1,7 +1,6 @@
 package com.webculcate.event.reservation.service.core.model.external.event;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.webculcate.event.reservation.service.core.constant.external.CapacityUpdateType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

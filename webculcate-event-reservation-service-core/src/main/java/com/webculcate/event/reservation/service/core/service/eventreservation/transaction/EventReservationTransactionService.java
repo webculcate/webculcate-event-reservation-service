@@ -8,11 +8,13 @@ import com.webculcate.event.reservation.service.core.model.dto.eventreservation.
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.transaction.EventReservationRollbackDto;
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentResponse;
 import com.webculcate.event.reservation.service.core.model.entity.eventreservation.ScheduledEventReservation;
+import com.webculcate.event.reservation.service.core.model.entity.payment.Payment;
 import com.webculcate.event.reservation.service.core.model.external.event.CapacityUpdateResponse;
 import com.webculcate.event.reservation.service.core.repository.eventreservation.EventReservationRepository;
 import com.webculcate.event.reservation.service.core.service.eventreservation.factory.IEventReservationFactory;
 import com.webculcate.event.reservation.service.core.service.external.event.EventServiceExt;
 import com.webculcate.event.reservation.service.core.service.payment.PaymentManager;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,6 +29,7 @@ import java.util.Set;
 
 import static com.webculcate.event.reservation.service.core.constant.ScheduledEventReservationStatus.CONFIRMED;
 import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.STRING_UNDERSCORE;
+import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.ZERO_LONG;
 
 @Slf4j
 @Service
@@ -43,6 +46,8 @@ public class EventReservationTransactionService {
 
     private final ApplicationEventPublisher publisher;
 
+    private final EntityManager entityManager;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ScheduledEventReservation> createEventReservationTransaction(EventReservationCreationRequest request, Integer capacity) {
         EventReservationRollbackDto rollbackDto = new EventReservationRollbackDto();
@@ -53,11 +58,14 @@ public class EventReservationTransactionService {
             rollbackDto.setCapacityUpdateResponse(reductionResponse);
         List<ScheduledEventReservation> reservations = generateAndSaveEventReservations(request);
         PaymentResponse paymentResponse = paymentManager.adaptAndPay(request, PaymentOperationType.DEBIT);
-        if (paymentResponse.isNotSuccessful())
+        if (paymentResponse.isNotSuccessful()) {
+            publisher.publishEvent(rollbackDto);
             throw new PaymentFailedException();
-        else
+        }
+        else {
             rollbackDto.setPaymentResponse(paymentResponse);
-        reservations = confirmEventReservations(reservations);
+        }
+        reservations = confirmEventReservations(reservations, paymentResponse);
         publisher.publishEvent(rollbackDto);
         return reservations;
     }
@@ -82,7 +90,7 @@ public class EventReservationTransactionService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ScheduledEventReservation> confirmEventReservations(List<ScheduledEventReservation> reservations) {
+    public List<ScheduledEventReservation> confirmEventReservations(List<ScheduledEventReservation> reservations, PaymentResponse paymentResponse) {
         reservations.forEach(reservation -> {
             reservation.setStatus(CONFIRMED);
             reservation.setConfirmationKey(
@@ -91,8 +99,10 @@ public class EventReservationTransactionService {
                             reservation.getCustomerId().toString(),
                             CONFIRMED.name())
             );
+            reservation.setPayment(new Payment(paymentResponse.getPayment().getPaymentId(), ZERO_LONG));
         });
-        reservations = repository.saveAll(reservations);
+        reservations = repository.saveAllAndFlush(reservations);
+        reservations.forEach(entityManager::refresh);
         return reservations;
     }
 

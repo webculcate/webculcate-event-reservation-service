@@ -17,10 +17,15 @@ public class EventServiceExt {
 
     private final EventServiceClient eventServiceClient;
 
-
     public CapacityUpdateResponse reduceCapacity(Long scheduledEventId, Integer capacity) {
-        ResponseEntity<CapacityUpdateResponse> response = eventServiceClient.updateCapacity(new CapacityUpdateRequest(scheduledEventId, capacity, DECREASE_CAPACITY));
-        return nullHandledExtraction(response::getBody)
-                .orElse(new CapacityUpdateResponse(false));
+        CapacityUpdateResponse failedCapacityUpdateResponse = new CapacityUpdateResponse(false);
+        try {
+            ResponseEntity<CapacityUpdateResponse> response = eventServiceClient.updateCapacity(new CapacityUpdateRequest(scheduledEventId, capacity, DECREASE_CAPACITY));
+            return nullHandledExtraction(response::getBody)
+                    .orElse(failedCapacityUpdateResponse);
+        } catch (Exception exception) {
+            log.error("Exception : ", exception);
+        }
+        return failedCapacityUpdateResponse;
     }
 }

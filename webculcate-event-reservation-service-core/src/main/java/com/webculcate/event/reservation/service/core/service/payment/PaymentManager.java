@@ -6,14 +6,11 @@ import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentRe
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import static com.webculcate.event.reservation.service.core.constant.PaymentServiceStrategyType.DEFAULT_PAYMENT_SERVICE;
-import static com.webculcate.event.reservation.service.core.constant.PaymentServiceStrategyType.PAYMENT_SERVICE_PROXY;
-import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.PROXY_ENABLED;
 
 @Slf4j
 @Service
@@ -24,13 +21,7 @@ public class PaymentManager {
 
     private final PaymentAmountGenerator amountGenerator;
 
-    @Value(PROXY_ENABLED)
-    private boolean proxyEnabled;
-
     public IPaymentService getPaymentService() {
-        if (proxyEnabled)
-            return serviceMap.get(PAYMENT_SERVICE_PROXY);
-        else
             return serviceMap.get(DEFAULT_PAYMENT_SERVICE);
     }
 

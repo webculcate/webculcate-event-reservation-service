@@ -17,6 +17,8 @@ public class CapacityUpdateResponse {
 
     private Long scheduledEventId;
 
+    private Integer capacityBeforeUpdate;
+
     private Integer capacityAfterUpdate;
 
     private Boolean success;

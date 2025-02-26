@@ -2,7 +2,6 @@ package com.webculcate.event.reservation.service.core.service.payment.impl;
 
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentRequest;
 import com.webculcate.event.reservation.service.core.model.dto.payment.PaymentResponse;
-import com.webculcate.event.reservation.service.core.model.entity.embedded.TimeLog;
 import com.webculcate.event.reservation.service.core.model.entity.payment.Payment;
 import com.webculcate.event.reservation.service.core.repository.payment.PaymentRepository;
 import com.webculcate.event.reservation.service.core.service.payment.IPaymentDtoMapper;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static com.webculcate.event.reservation.service.core.constant.EventReservationStrategyType.DEFAULT_EVENT_RESERVATION_SERVICE;
 import static com.webculcate.event.reservation.service.core.constant.PaymentServiceStrategyType.DEFAULT_PAYMENT_SERVICE;
 
 @Slf4j

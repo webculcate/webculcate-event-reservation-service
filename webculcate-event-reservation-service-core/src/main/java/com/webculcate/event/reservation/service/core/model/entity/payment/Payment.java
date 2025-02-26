@@ -9,7 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.*;
+import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.PAYMENT_SEQUENCE_NAME;
+import static com.webculcate.event.reservation.service.core.constant.ServiceConstant.PAYMENT_TABLE_NAME;
 
 @Data
 @Builder
@@ -30,8 +31,9 @@ public class Payment {
             strategy = GenerationType.SEQUENCE,
             generator = PAYMENT_SEQUENCE_NAME
     )
-    private String paymentId;
+    private Long paymentId;
 
+    @Column(nullable = false)
     private Long purchasedBy;
 
     private Double amount;
@@ -43,4 +45,10 @@ public class Payment {
 
     @Version
     private Long version;
+
+    public Payment(Long paymentId, Long version) {
+        this.paymentId = paymentId;
+        this.version = version;
+    }
+
 }

@@ -8,6 +8,10 @@ public class ServiceConstant {
 
     public static final String SCHEDULED_EVENT_RESERVATION_SEQUENCE_NAME = SCHEDULED_EVENT_RESERVATION_TABLE_NAME + "_sequence";
 
+    public static final String SCHEDULED_EVENT_ID_COLUMN_NAME = "scheduled_event_id";
+
+    public static final String SCHEDULED_EVENT_ID_INDEX_NAME = SCHEDULED_EVENT_ID_COLUMN_NAME + "_index";
+
     public static final String PAYMENT_TABLE_NAME = "service_payment";
 
     public static final String PAYMENT_SEQUENCE_NAME = PAYMENT_TABLE_NAME + "_sequence";
@@ -17,6 +21,8 @@ public class ServiceConstant {
     // general
 
     public static final Integer ZERO_INTEGER = 0;
+
+    public static final Long ZERO_LONG = 0L;
 
     public static final String PROXY_ENABLED = "${application.proxy.enabled}";
 
@@ -36,5 +42,11 @@ public class ServiceConstant {
     // topic
 
     public static final String WEBCULCATE_TOPIC_CAPACITY_REDUCTION_ROLLBACK = "webculcateCapacityReductionRollback";
+
+    // bean
+
+    public static final String DEFAULT_TASK_EXECUTOR = "DEFAULT_TASK_EXECUTOR";
+
+    public static final String DEFAULT_TASK_EXECUTOR_PREFIX = DEFAULT_TASK_EXECUTOR + "--";
 
 }

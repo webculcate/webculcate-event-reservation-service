@@ -3,9 +3,9 @@ package com.webculcate.event.reservation.service.core.service.eventreservation.i
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidCapacityException;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.*;
 import com.webculcate.event.reservation.service.core.model.entity.eventreservation.ScheduledEventReservation;
-import com.webculcate.event.reservation.service.core.service.eventreservation.transaction.EventReservationTransactionService;
 import com.webculcate.event.reservation.service.core.service.eventreservation.IEventReservationService;
 import com.webculcate.event.reservation.service.core.service.eventreservation.IScheduledEventReservationDtoMapper;
+import com.webculcate.event.reservation.service.core.service.eventreservation.transaction.EventReservationTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,7 @@ public class EventReservationService implements IEventReservationService {
         if (capacity <= ZERO_INTEGER)
             throw new InvalidCapacityException();
         List<ScheduledEventReservation> reservations = eventReservationTransactionService.createEventReservationTransaction(request, capacity);
+        log.info("{} reservations created", reservations.size());
         return new EventReservationCreationResponse(
                 SCHEDULED_EVENT_RESERVATION.getSuccessMessage(),
                 scheduledEventReservationDtoMapper.mapToScheduledEventReservationDto(reservations)
@@ -43,6 +44,7 @@ public class EventReservationService implements IEventReservationService {
     @Override
     public EventReservationPaginationResponse getEventReservationList(EventReservationPaginationRequest request) {
         List<ScheduledEventReservation> resultList = eventReservationTransactionService.getEventReservationList(request);
+        log.info("{} reservations fetched", resultList.size());
         List<ScheduledEventReservationDto> reservations = scheduledEventReservationDtoMapper.mapToScheduledEventReservationDto(resultList);
         return new EventReservationPaginationResponse(reservations, request.getPageIndex(), request.getPageSize());
     }

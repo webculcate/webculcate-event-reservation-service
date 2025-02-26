@@ -2,6 +2,7 @@ package com.webculcate.event.reservation.service.core.service.eventreservation.i
 
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.ScheduledEventReservationDto;
 import com.webculcate.event.reservation.service.core.model.entity.eventreservation.ScheduledEventReservation;
+import com.webculcate.event.reservation.service.core.model.external.user.UserDto;
 import com.webculcate.event.reservation.service.core.service.eventreservation.IScheduledEventReservationDtoMapper;
 import com.webculcate.event.reservation.service.core.service.external.user.UserServiceExt;
 import com.webculcate.event.reservation.service.core.service.payment.IPaymentDtoMapper;
@@ -10,8 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Slf4j
@@ -34,8 +36,11 @@ public class DefaultScheduledEventReservationDtoMapper implements IScheduledEven
     public ScheduledEventReservationDto mapToScheduledEventReservationDto(ScheduledEventReservation reservation) {
         ScheduledEventReservationDto reservationDto = ScheduledEventReservationDto.initializeBlankScheduledEventReservationDto();
         copyProperties(reservation, reservationDto);
-        copyProperties(reservation.getTimeLog(), reservationDto.getTimeLog());
-        reservationDto.setCustomer(userService.resolveUser(reservation.getCustomerId()));
+        if (nonNull(reservation.getTimeLog()) && nonNull(reservationDto.getTimeLog()))
+            copyProperties(reservation.getTimeLog(), reservationDto.getTimeLog());
+        Optional<UserDto> optionalUserDto = userService.resolveUser(reservation.getCustomerId());
+        if (optionalUserDto.isPresent())
+            reservationDto.setCustomer(optionalUserDto.get());
         reservationDto.setPayment(paymentDtoMapper.mapToPaymentDto(reservation.getPayment()));
         return reservationDto;
     }

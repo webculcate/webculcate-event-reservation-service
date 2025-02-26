@@ -7,7 +7,7 @@ spring:
     password: ${DATA_SOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
   kafka:
     consumer:
@@ -20,6 +20,12 @@ spring:
       bootstrap-servers: ${BOOTSTRAP_SERVER_HOST}
       key-serializer: ${KEY_SERIALIZER}
       value-serializer: ${VALUE_SERIALIZER}
+      properties:
+        spring:
+          json:
+            add:
+              type:
+                headers: false
 
 server:
   port: ${SERVER_PORT}

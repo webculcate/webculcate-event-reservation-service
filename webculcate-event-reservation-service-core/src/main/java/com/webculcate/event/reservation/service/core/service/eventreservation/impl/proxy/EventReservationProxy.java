@@ -1,6 +1,7 @@
 package com.webculcate.event.reservation.service.core.service.eventreservation.impl.proxy;
 
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidEventReservationCreationRequestException;
+import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidEventReservationPaginationRequestException;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationCreationRequest;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationCreationResponse;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationPaginationRequest;
@@ -31,17 +32,28 @@ public class EventReservationProxy implements IEventReservationService {
     public EventReservationCreationResponse createEventReservation(EventReservationCreationRequest request) {
         Set<ConstraintViolation<EventReservationCreationRequest>> validationResults = serviceValidator.validate(request);
         if (!validationResults.isEmpty()) {
-            List<String> errorMessageList = validationResults.stream()
-                    .map(result -> result.getPropertyPath() + STRING_SPACE + result.getMessage())
-                    .toList();
+            List<String> errorMessageList = generateErrorMessageList(validationResults);
             throw new InvalidEventReservationCreationRequestException(errorMessageList);
         }
+        log.info("Validation successful for createEventReservation");
         return eventReservationService.createEventReservation(request);
     }
 
     @Override
     public EventReservationPaginationResponse getEventReservationList(EventReservationPaginationRequest request) {
+        Set<ConstraintViolation<EventReservationPaginationRequest>> validationResults = serviceValidator.validate(request);
+        if (!validationResults.isEmpty()) {
+            List<String> errorMessageList = generateErrorMessageList(validationResults);
+            throw new InvalidEventReservationPaginationRequestException(errorMessageList);
+        }
+        log.info("Validation successful for getEventReservationList");
         return eventReservationService.getEventReservationList(request);
+    }
+
+    private <T> List<String> generateErrorMessageList(Set<ConstraintViolation<T>> validationResults) {
+        return validationResults.stream()
+                .map(result -> result.getPropertyPath() + STRING_SPACE + result.getMessage())
+                .toList();
     }
 
 }

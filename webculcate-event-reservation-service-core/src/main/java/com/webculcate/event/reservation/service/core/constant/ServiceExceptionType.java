@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum ServiceExceptionType {
 
     INVALID_EVENT_RESERVATION_CREATION_REQUEST("Event reservation creation request invalid"),
+    INVALID_EVENT_RESERVATION_PAGINATION_REQUEST("Event pagination creation request invalid"),
     INVALID_CAPACITY_REQUEST("Capacity invalid");
 
     private final String message;

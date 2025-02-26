@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentDto {
 
-    private String paymentId;
+    private Long paymentId;
 
     private Double amount;
 
