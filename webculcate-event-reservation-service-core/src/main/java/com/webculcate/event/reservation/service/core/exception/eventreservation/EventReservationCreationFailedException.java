@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class InvalidCapacityException extends RuntimeException {
+public class EventReservationCreationFailedException extends RuntimeException {
 
     private List<String> messageList = new ArrayList<>();
 
-    public InvalidCapacityException(List<String> messageList) {
+    public EventReservationCreationFailedException(List<String> messageList) {
         this.messageList = messageList;
     }
 

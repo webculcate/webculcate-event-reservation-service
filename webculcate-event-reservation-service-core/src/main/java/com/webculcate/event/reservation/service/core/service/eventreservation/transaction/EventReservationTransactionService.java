@@ -1,6 +1,7 @@
 package com.webculcate.event.reservation.service.core.service.eventreservation.transaction;
 
 import com.webculcate.event.reservation.service.core.constant.PaymentOperationType;
+import com.webculcate.event.reservation.service.core.exception.eventreservation.EventReservationCreationFailedException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidCapacityException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.PaymentFailedException;
 import com.webculcate.event.reservation.service.core.model.dto.eventreservation.EventReservationCreationRequest;
@@ -51,23 +52,27 @@ public class EventReservationTransactionService {
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ScheduledEventReservation> createEventReservationTransaction(EventReservationCreationRequest request, Integer capacity) {
         EventReservationRollbackDto rollbackDto = new EventReservationRollbackDto();
-        CapacityUpdateResponse reductionResponse = eventServiceExt.reduceCapacity(request.getScheduledEventId(), capacity);
-        if (reductionResponse.hasFailed())
-            throw new InvalidCapacityException();
-        else
-            rollbackDto.setCapacityUpdateResponse(reductionResponse);
-        List<ScheduledEventReservation> reservations = generateAndSaveEventReservations(request);
-        PaymentResponse paymentResponse = paymentManager.adaptAndPay(request, PaymentOperationType.DEBIT);
-        if (paymentResponse.isNotSuccessful()) {
+        try {
+            CapacityUpdateResponse reductionResponse = eventServiceExt.reduceCapacity(request.getScheduledEventId(), capacity);
+            if (reductionResponse.hasFailed())
+                throw new InvalidCapacityException();
+            else
+                rollbackDto.setCapacityUpdateResponse(reductionResponse);
+            List<ScheduledEventReservation> reservations = generateAndSaveEventReservations(request);
+            PaymentResponse paymentResponse = paymentManager.adaptAndPay(request, PaymentOperationType.DEBIT);
+            if (paymentResponse.isNotSuccessful()) {
+                publisher.publishEvent(rollbackDto);
+                throw new PaymentFailedException();
+            } else {
+                rollbackDto.setPaymentResponse(paymentResponse);
+            }
+            reservations = confirmEventReservations(reservations, paymentResponse);
+            return reservations;
+        } catch (Exception exception) {
+            log.error("Exception : ", exception);
             publisher.publishEvent(rollbackDto);
-            throw new PaymentFailedException();
+            throw new EventReservationCreationFailedException();
         }
-        else {
-            rollbackDto.setPaymentResponse(paymentResponse);
-        }
-        reservations = confirmEventReservations(reservations, paymentResponse);
-        publisher.publishEvent(rollbackDto);
-        return reservations;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
