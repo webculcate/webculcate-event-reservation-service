@@ -1,5 +1,6 @@
 package com.webculcate.event.reservation.service.core.controller.exceptionhandler;
 
+import com.webculcate.event.reservation.service.core.exception.eventreservation.EventReservationCreationFailedException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidCapacityException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidEventReservationCreationRequestException;
 import com.webculcate.event.reservation.service.core.exception.eventreservation.InvalidEventReservationPaginationRequestException;
@@ -42,6 +43,16 @@ public class BaseExceptionHandler {
                 .body(new ServiceExceptionResponse(
                         INVALID_CAPACITY_REQUEST,
                         INVALID_CAPACITY_REQUEST.getMessage(),
+                        List.of(exception.getMessageList()))
+                );
+    }
+
+    @ExceptionHandler(EventReservationCreationFailedException.class)
+    public ResponseEntity<ServiceExceptionResponse> handleEventReservationCreationFailedException(EventReservationCreationFailedException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(new ServiceExceptionResponse(
+                        EVENT_RESERVATION_CREATION_FAILED,
+                        EVENT_RESERVATION_CREATION_FAILED.getMessage(),
                         List.of(exception.getMessageList()))
                 );
     }
